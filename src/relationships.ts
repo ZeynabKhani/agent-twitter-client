@@ -162,7 +162,6 @@ export async function followUser(
   username: string,
   auth: TwitterAuth,
 ): Promise<Response> {
-
   // Check if the user is logged in
   if (!(await auth.isLoggedIn())) {
     throw new Error('Must be logged in to follow users');
@@ -194,8 +193,11 @@ export async function followUser(
   });
 
   // Install auth headers
-  await auth.installTo(headers, 'https://api.twitter.com/1.1/friendships/create.json');
-  
+  await auth.installTo(
+    headers,
+    'https://api.twitter.com/1.1/friendships/create.json',
+  );
+
   // Make the follow request using auth.fetch
   const res = await auth.fetch(
     'https://api.twitter.com/1.1/friendships/create.json',
@@ -209,6 +211,77 @@ export async function followUser(
 
   if (!res.ok) {
     throw new Error(`Failed to follow user: ${res.statusText}`);
+  }
+
+  const data = await res.json();
+
+  return new Response(JSON.stringify(data), {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+}
+
+/**
+ * Unfollows a Twitter user by their username
+ * @param username The username of the account to unfollow
+ * @param auth The Twitter authentication instance
+ * @returns A Response object containing the unfollow result
+ */
+export async function unfollowUser(
+  username: string,
+  auth: TwitterAuth,
+): Promise<Response> {
+  // Check if the user is logged in
+  if (!(await auth.isLoggedIn())) {
+    throw new Error('Must be logged in to unfollow users');
+  }
+
+  // Get user ID from username
+  const userIdResult = await getUserIdByScreenName(username, auth);
+  if (!userIdResult.success) {
+    throw new Error(`Failed to get user ID: ${userIdResult.err.message}`);
+  }
+
+  const userId = userIdResult.value;
+
+  // Prepare the request body
+  const requestBody = {
+    include_profile_interstitial_type: '1',
+    skip_status: 'true',
+    user_id: userId,
+  };
+
+  // Prepare the headers
+  const headers = new Headers({
+    'Content-Type': 'application/x-www-form-urlencoded',
+    Referer: `https://twitter.com/${username}`,
+    'X-Twitter-Active-User': 'yes',
+    'X-Twitter-Auth-Type': 'OAuth2Session',
+    'X-Twitter-Client-Language': 'en',
+    Authorization: `Bearer ${bearerToken}`,
+  });
+
+  // Install auth headers
+  await auth.installTo(
+    headers,
+    'https://api.twitter.com/1.1/friendships/destroy.json',
+  );
+
+  // Make the unfollow request using auth.fetch
+  const res = await auth.fetch(
+    'https://api.twitter.com/1.1/friendships/destroy.json',
+    {
+      method: 'POST',
+      headers,
+      body: new URLSearchParams(requestBody).toString(),
+      credentials: 'include',
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error(`Failed to unfollow user: ${res.statusText}`);
   }
 
   const data = await res.json();
