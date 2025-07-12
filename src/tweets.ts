@@ -1700,7 +1700,6 @@ export async function getAllRetweeters(
 
   return allRetweeters;
 }
-
 /**
  * Fetches a single page of users who liked a given tweet, collecting both bottom and top cursors.
  * @param tweetId The ID of the tweet to get likers for.
@@ -1720,7 +1719,7 @@ export async function fetchLikersPage(
   topCursor?: string;
 }> {
   const baseUrl =
-    'https://twitter.com/i/api/graphql/5MOCiVfqIdTj8YtJhOqF-A/Favoriters';
+    'https://twitter.com/i/api/graphql/DlURTJjCVitiSKrykYTkag/Favoriters';
 
   // Build query parameters
   const variables = {
