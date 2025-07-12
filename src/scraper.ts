@@ -59,6 +59,8 @@ import {
   getArticle,
   getAllRetweeters,
   Retweeter,
+  getAllLikers,
+  Liker,
 } from './tweets';
 import {
   parseTimelineTweetsV2,
@@ -1073,6 +1075,15 @@ export class Scraper {
    */
   public async getRetweetersOfTweet(tweetId: string): Promise<Retweeter[]> {
     return await getAllRetweeters(tweetId, this.auth);
+  }
+
+  /**
+   * Retrieves all users who liked the given tweet.
+   * @param tweetId The ID of the tweet.
+   * @returns An array of users (likers).
+   */
+  public async getAllLikersOfTweet(tweetId: string): Promise<Liker[]> {
+    return await getAllLikers(tweetId, this.auth);
   }
 
   /**

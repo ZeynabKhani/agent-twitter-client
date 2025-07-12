@@ -3,6 +3,8 @@ export { Scraper } from './scraper';
 export { SearchMode } from './search';
 export type { QueryProfilesResponse, QueryTweetsResponse } from './timeline-v1';
 export type { Tweet } from './tweets';
+export type { Liker } from './tweets';
+export { getAllLikers } from './tweets';
 
 export { Space } from './spaces/core/Space';
 export { SpaceParticipant } from './spaces/core/SpaceParticipant';

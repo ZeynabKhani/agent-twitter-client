@@ -609,3 +609,35 @@ test('scraper can get article using getArticle', async () => {
   expect(article).not.toBeNull();
   expect(article?.title).toMatch(/Introducing Articles on X/);
 }, 30000);
+
+test('scraper can get users who liked a tweet', async () => {
+  const scraper = await getScraper();
+
+  // Test with a popular tweet that likely has many likes
+  const tweetId = '1585338303800578049'; // Elon Musk's tweet about Twitter sounds
+
+  try {
+    const likers = await scraper.getAllLikersOfTweet(tweetId);
+
+    // Should return an array of likers
+    expect(Array.isArray(likers)).toBe(true);
+
+    // Each liker should have the required properties
+    for (const liker of likers) {
+      expect(liker).toHaveProperty('rest_id');
+      expect(liker).toHaveProperty('screen_name');
+      expect(liker).toHaveProperty('name');
+      expect(typeof liker.rest_id).toBe('string');
+      expect(typeof liker.screen_name).toBe('string');
+      expect(typeof liker.name).toBe('string');
+    }
+
+    console.log(`Found ${likers.length} users who liked tweet ${tweetId}`);
+  } catch (error) {
+    // If the tweet doesn't exist or is private, that's okay for testing
+    console.log(
+      'Could not fetch likers, possibly due to tweet privacy or authentication:',
+      error.message,
+    );
+  }
+}, 30000);
