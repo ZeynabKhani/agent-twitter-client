@@ -15,6 +15,7 @@ export { RecordToDiskPlugin } from './spaces/plugins/RecordToDiskPlugin';
 export { MonitorAudioPlugin } from './spaces/plugins/MonitorAudioPlugin';
 export { IdleMonitorPlugin } from './spaces/plugins/IdleMonitorPlugin';
 export { HlsRecordPlugin } from './spaces/plugins/HlsRecordPlugin';
+export { fetchLikedTweets } from './tweets';
 
 export * from './types/spaces';
 export * from './spaces/types';
